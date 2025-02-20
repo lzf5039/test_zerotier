@@ -15,20 +15,21 @@ jobs:
         run: |
           curl -s https://install.zerotier.com | sudo bash
 
-      - name: 停止zero服务
+      - name: 停止zerotier服务
         run: |
-          systemctl stop zerotoer.server
+          sudo systemctl stop zerotier.service
 
       - name: 下载planet
         run: |
-          curl -L -o /var/lib/zerotier-ine/planet http://www.linzifu.xyz:8081/planet
+          curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
 
-      - name: 运行zero服务
+      - name: 运行zerotier服务
         run: |
+          sudo systemctl start zerotier.service
 
-      - name: 加入zeri网络
+      - name: 加入zero网络
         run: |
-          zerotier-cli join 645ae69a7238a4bd
+          sudo zerotier-cli join 645ae69a7238a4bd
 
       - name: Wait for 5 hours
         run: sleep 18000  # 如果需要等待，才用 sleep
