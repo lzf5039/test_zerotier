@@ -21,7 +21,7 @@ jobs:
 
       - name: 下载planet
         run: |
-          curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
+          sudo curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
 
       - name: 启动zerotier服务
         run: |
