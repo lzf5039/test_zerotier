@@ -19,12 +19,25 @@ jobs:
           tar -xzvf alpine.tar.gz -C ~/alpine
           echo "Alpine Linux 解压完成"
 
+      - name: 测试网络连接和查看网络配置
+        run: |
+          sudo chroot ~/alpine /bin/sh -c "
+          echo '### 测试网络连接 ###'
+          ping -c 4 8.8.8.8 || (echo 'Ping 测试失败，网络可能不可用。' && exit 1)
+
+          echo '### 查看网络配置 ###'
+          ifconfig
+          "
+
       - name: 安装 ZeroTier 并替换 planet 文件
         run: |
           sudo chroot ~/alpine /bin/sh -c "
           echo '### 配置 Alpine Linux ###'
-          # 使用南开大学镜像源
-          echo 'https://mirror.nju.edu.cn/alpine/v3.18/main' > /etc/apk/repositories
+          # 使用阿里云镜像源
+          echo 'https://mirrors.aliyun.com/alpine/v3.18/main' > /etc/apk/repositories
+          echo 'https://mirrors.aliyun.com/alpine/v3.18/community' >> /etc/apk/repositories
+          # 添加备用源
+          echo 'https://mirror.nju.edu.cn/alpine/v3.18/main' >> /etc/apk/repositories
           echo 'https://mirror.nju.edu.cn/alpine/v3.18/community' >> /etc/apk/repositories
           apk update
 
