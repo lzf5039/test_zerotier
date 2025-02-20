@@ -21,8 +21,8 @@ jobs:
 
       - name: 下载planet
         run: |
-          sudo curl -L -o /var/lib/zerotier-one/identity.public http://www.linzifu.xyz:8081/identity.public
-          sudo curl -L -o /var/lib/zerotier-one/identity.secret http://www.linzifu.xyz:8081/identity.secret
+          #sudo curl -L -o /var/lib/zerotier-one/identity.public http://www.linzifu.xyz:8081/identity.public
+          #sudo curl -L -o /var/lib/zerotier-one/identity.secret http://www.linzifu.xyz:8081/identity.secret
           sudo curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
 
       - name: 运行zerotier服务
