@@ -11,21 +11,17 @@ jobs:
       - name: update ins curl
         run: sudo apt update && sudo apt install curl 
 
-      - name: Install ZEROTIER
+      - name: 安装 Zero
         run: |
           curl -s https://install.zerotier.com | sudo bash
-
-      - name: 停止zerotier服务
-        run: |
-          sudo systemctl stop zerotier.service
 
       - name: 下载planet
         run: |
           curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
 
-      - name: 运行zerotier服务
+      - name: 重启zerotier服务
         run: |
-          sudo systemctl start zerotier.service
+          sudo systemctl restart zerotier.service
 
       - name: 加入zero网络
         run: |
