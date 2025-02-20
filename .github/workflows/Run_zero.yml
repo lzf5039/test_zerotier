@@ -37,6 +37,7 @@ jobs:
         run: |
           sudo sysctl net.ipv4.ip_forward
           sudo sysctl -p
+          sudo ifconfig
           sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
       - name: 运行5小时
