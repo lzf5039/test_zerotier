@@ -27,8 +27,6 @@ jobs:
         run: |
           sudo systemctl start zerotier-one.service
           sudo systemctl enable zerotier-one.service
-          sleep 5
-          sudo systemctl status zerotier-one.service
 
       - name: 加入 Zero 网络
         run: |
