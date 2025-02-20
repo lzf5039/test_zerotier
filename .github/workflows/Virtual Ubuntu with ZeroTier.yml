@@ -1,4 +1,4 @@
-name: Run OpenWrt on QEMU
+name: Ins join Zero
 
 on:
   workflow_dispatch:    # 手动触发
