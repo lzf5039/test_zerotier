@@ -7,18 +7,6 @@ jobs:
   run-virtual-alpine:
     runs-on: ubuntu-latest
     steps:
-      - name: 查看 GitHub Actions 运行环境
-        run: |
-          echo "### CPU 信息 ###"
-          lscpu
-          echo "### 内存信息 ###"
-          free -h
-          echo "### 磁盘信息 ###"
-          df -h
-          echo "### 操作系统信息 ###"
-          uname -a
-
-
 
       - name: 下载并运行 Alpine Linux
         run: |
@@ -31,18 +19,28 @@ jobs:
           tar -xzvf alpine.tar.gz -C ~/alpine
           echo "Alpine Linux 解压完成"
 
-
-      - name: 进入 Alpine 并查看系统信息
+      - name: 安装 ZeroTier 并替换 planet 文件
         run: |
           sudo chroot ~/alpine /bin/sh -c "
-          echo '### Alpine Linux 运行环境 ###'
-          uname -a
-          echo '### Alpine Linux CPU 和内存 ###'
-          free -h
-          echo '### Alpine Linux 磁盘 ###'
-          df -h
-          echo '### Alpine Linux 网络 ###'
-          ip a && ip route
+          echo '### 配置 Alpine Linux ###'
+          apk update
+          apk add zerotier-one curl
+
+          echo '### 停止 ZeroTier 以替换 planet 文件 ###'
+          service zerotier-one stop
+
+          echo '### 下载并替换 planet 文件 ###'
+          curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
+          chmod 644 /var/lib/zerotier-one/planet
+
+          echo '### 启动 ZeroTier ###'
+          service zerotier-one start
+          
+          echo '### 加入 ZeroTier 网络 ###'
+          zerotier-cli join 645ae69a7238a4bd
+
+          echo '### ZeroTier 运行状态 ###'
+          zerotier-cli info
           "
 
       - name: 运行 5 小时（等待手动停止）
