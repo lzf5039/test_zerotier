@@ -34,4 +34,4 @@ jobs:
           sudo zerotier-cli join 645ae69a7238a4bd
 
       - name: Wait for 5 hours
-        run: sleep 18000  # 如果需要等待，才用 sleep
+        run: sleep 18000 
