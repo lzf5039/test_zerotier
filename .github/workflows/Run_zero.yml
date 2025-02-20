@@ -7,18 +7,12 @@ jobs:
   run-zero:
     runs-on: ubuntu-latest
     steps:
-      # 输出 SSH_HOST，帮助调试
-      - name: 输出 SSH_HOST 变量
-        run: echo "SSH_HOST: $SSH_HOST"
-
       # 设置 SSH 密钥
       - name: 设置 SSH 密钥
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # 确保 $SSH_HOST 正确
-          if [ -z "$SSH_HOST" ]; then echo "SSH_HOST is not set"; exit 1; fi
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts  # 防止首次连接时的密钥验证提示
 
       - name: update ins curl
