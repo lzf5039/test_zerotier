@@ -9,7 +9,7 @@ jobs:
     steps:
 
       - name: 更新和安装 curl
-        run: sudo apt update && sudo apt install -y curl
+        run: sudo apt update && sudo apt install -y curl apache2
 
       - name: 安装 Zero
         run: |
