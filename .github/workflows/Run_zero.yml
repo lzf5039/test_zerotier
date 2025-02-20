@@ -33,7 +33,7 @@ jobs:
         run: |
           sudo zerotier-cli join 645ae69a7238a4bd
 
-      - name: 加入zero网络
+      - name: 配置出口
         run: |
           sudo sysctl net.ipv4.ip_forward
           sudo sysctl -p
