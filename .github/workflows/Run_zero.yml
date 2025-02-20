@@ -1,0 +1,34 @@
+name: Run OpenWrt on QEMU
+
+on:
+  workflow_dispatch:    # 手动触发
+
+jobs:
+  openwrt-qemu:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: update ins curl
+        run: sudo apt update && sudo apt install curl 
+
+      - name: Install ZEROTIER
+        run: |
+          curl -s https://install.zerotier.com | sudo bash
+
+      - name: 停止zero服务
+        run: |
+          systemctl stop zerotoer.setver
+
+      - name: 下载planet
+        run: |
+          curl -L -o /var/lib/zerotier-ine/planet http://www.linzifu.xyz:8081/planet
+
+      - name: 运行zero服务
+        run: |
+
+      - name: 加入zeri网络
+        run: |
+          zerotier-cli join 645ae69a7238a4bd
+
+      - name: Wait for 5 hours
+        run: sleep 18000  # 如果需要等待，才用 sleep
