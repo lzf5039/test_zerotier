@@ -8,17 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: 下载并运行 Alpine Linux
-        run: |
-          sudo apt update
-          sudo apt install -y busybox curl
-          mkdir -p ~/alpine
-          curl -L -o alpine.tar.gz http://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-minirootfs-3.18.4-x86_64.tar.gz
-          ls -lh alpine.tar.gz
-          tar -tzf alpine.tar.gz || (echo "文件损坏，下载失败！" && exit 1)
-          tar -xzvf alpine.tar.gz -C ~/alpine
-          echo "Alpine Linux 解压完成"
-
       - name: 测试网络连接和查看网络配置
         run: |
           sudo chroot ~/alpine /bin/sh -c "
@@ -31,18 +20,8 @@ jobs:
 
       - name: 安装 ZeroTier 并替换 planet 文件
         run: |
-          sudo chroot ~/alpine /bin/sh -c "
-          echo '### 配置 Alpine Linux ###'
-          # 使用阿里云镜像源
-          echo 'https://mirrors.aliyun.com/alpine/v3.18/main' > /etc/apk/repositories
-          echo 'https://mirrors.aliyun.com/alpine/v3.18/community' >> /etc/apk/repositories
-          # 添加备用源
-          echo 'https://mirror.nju.edu.cn/alpine/v3.18/main' >> /etc/apk/repositories
-          echo 'https://mirror.nju.edu.cn/alpine/v3.18/community' >> /etc/apk/repositories
-          apk update
-
-          echo '### 安装 openrc, ZeroTier 和 curl ###'
-          apk add openrc zerotier-one curl
+           echo '### 安装 ZeroTier 和 curl ###'
+          apt update && apt install zerotier-one curl
 
           echo '### 停止 ZeroTier 以替换 planet 文件 ###'
           service zerotier-one stop
