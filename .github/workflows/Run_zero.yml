@@ -1,10 +1,10 @@
-name: Run OpenWrt on QEMU
+name: Ins join Zero
 
 on:
   workflow_dispatch:    # 手动触发
 
 jobs:
-  openwrt-qemu:
+  run-zeto:
     runs-on: ubuntu-latest
     steps:
 
