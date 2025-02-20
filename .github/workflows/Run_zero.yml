@@ -23,9 +23,11 @@ jobs:
         run: |
           sudo curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
 
-      - name: 启动zerotier服务
+      - name: 运行zerotier服务
         run: |
           sudo systemctl start zerotier-one.service
+          sudo systemctl enable zerotier-one.service 
+          sleep 10 
 
       - name: 加入zero网络
         run: |
