@@ -45,9 +45,5 @@ jobs:
           sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
           sudo ifconfig
 
-      - name: 通过 SSH 远程登录并执行命令
-        run: |
-          ssh -i ~/.ssh/id_rsa username@$SSH_HOST 'echo "Successfully logged in!" && ls -al'
-
       - name: 运行5小时
         run: sleep 18000  # 5小时
