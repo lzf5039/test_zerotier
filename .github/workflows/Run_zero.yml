@@ -23,10 +23,6 @@ jobs:
         run: |
           sudo curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
 
-      - name: 修改 ZeroTier 端口为 25468
-        run: |
-          sudo sed -i 's/"physicalPort": 80/"physicalPort": 25468/' /etc/zerotier-one.conf
-
       - name: 运行 zerotier 服务
         run: |
           sudo systemctl start zerotier-one.service
