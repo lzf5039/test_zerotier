@@ -4,7 +4,7 @@ on:
   workflow_dispatch:    # 手动触发
 
 jobs:
-  run-zeto:
+  run-zero:
     runs-on: ubuntu-latest
     steps:
 
@@ -17,7 +17,7 @@ jobs:
 
       - name: 停止zero服务
         run: |
-          systemctl stop zerotoer.setver
+          systemctl stop zerotoer.server
 
       - name: 下载planet
         run: |
