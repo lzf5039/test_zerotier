@@ -33,7 +33,7 @@ jobs:
           sudo zerotier-cli join 645ae69a7238a4bd
           sudo zerotier-cli join 645ae69a72f70785
           sleep 2
-          sudo zerotier-cli info
+          sudo zerotier-cli listpeers
 
       - name: 配置出口
         run: |
