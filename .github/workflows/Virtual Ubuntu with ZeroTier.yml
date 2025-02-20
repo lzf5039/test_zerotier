@@ -7,8 +7,10 @@ jobs:
   run-virtual-alpine:
     runs-on: ubuntu-latest
     steps:
+
       - name: 测试网络连接和查看网络配置
         run: |
+          sudo ufw disable
           echo '### 测试网络连接 ###'
           ping -c 4 8.8.8.8 || (echo 'Ping 测试失败，网络可能不可用。' && exit 1)
 
