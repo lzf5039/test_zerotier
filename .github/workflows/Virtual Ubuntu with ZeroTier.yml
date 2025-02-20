@@ -7,38 +7,46 @@ jobs:
   run-virtual-alpine:
     runs-on: ubuntu-latest
     steps:
-
       - name: 测试网络连接和查看网络配置
         run: |
-          sudo chroot ~/alpine /bin/sh -c "
           echo '### 测试网络连接 ###'
           ping -c 4 8.8.8.8 || (echo 'Ping 测试失败，网络可能不可用。' && exit 1)
 
           echo '### 查看网络配置 ###'
           ifconfig
-          "
 
-      - name: 安装 ZeroTier 并替换 planet 文件
+      - name: 安装 ZeroTier 和 curl
         run: |
-           echo '### 安装 ZeroTier 和 curl ###'
-          apt update && apt install zerotier-one curl
+          echo '### 安装 ZeroTier 和 curl ###'
+          sudo apt update && sudo apt install -y zerotier-one curl
 
+      - name: 停止 ZeroTier 以替换 planet 文件
+        run: |
           echo '### 停止 ZeroTier 以替换 planet 文件 ###'
-          service zerotier-one stop
+          sudo service zerotier-one stop
 
+      - name: 下载并替换 planet 文件
+        run: |
           echo '### 下载并替换 planet 文件 ###'
-          curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
-          chmod 644 /var/lib/zerotier-one/planet
+          sudo curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
+          sudo chmod 644 /var/lib/zerotier-one/planet
 
+      - name: 启动 ZeroTier
+        run: |
           echo '### 启动 ZeroTier ###'
-          service zerotier-one start
+          sudo service zerotier-one start
 
+      - name: 加入 ZeroTier 网络
+        run: |
           echo '### 加入 ZeroTier 网络 ###'
-          zerotier-cli join 645ae69a7238a4bd
+          sudo zerotier-cli join 645ae69a7238a4bd
 
+      - name: 查看 ZeroTier 运行状态
+        run: |
           echo '### ZeroTier 运行状态 ###'
-          zerotier-cli info
-          "
+          sudo zerotier-cli info
 
       - name: 运行 5 小时（等待手动停止）
-        run: sleep 18000
+        run: |
+          echo '### 等待 5 小时 ###'
+          sleep 18000
