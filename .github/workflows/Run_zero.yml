@@ -42,5 +42,20 @@ jobs:
           sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
           sudo ifconfig
 
+      - name: 查看 Zero 网络
+        run: |
+          sleep 2
+          sudo zerotier-cli listpeers
+          sleep 2
+          sudo zerotier-cli listpeers
+          sleep 2
+          sudo zerotier-cli listpeers
+          sleep 2
+          sudo zerotier-cli listpeers
+          sleep 2
+          sudo zerotier-cli listpeers
+          sleep 2
+          sudo zerotier-cli listpeers
+
       - name: 运行 5 小时
         run: sleep 18000  # 5小时
