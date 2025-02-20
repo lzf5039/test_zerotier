@@ -1,54 +1,36 @@
-name: install ZeroTier
+name: Run OpenWrt on QEMU
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:    # 手动触发
+  schedule:
+   # - cron: '0 */5 * * *'  # 5小时一次
 
 jobs:
-  run-virtual-alpine:
+  openwrt-qemu:
     runs-on: ubuntu-latest
     steps:
+      - name: Install QEMU
+        run: sudo apt update && sudo apt install -y qemu-system-aarch64
 
-      - name: 测试网络连接和查看网络配置
+      - name: Download OpenWrt Images
         run: |
-          sudo ufw disable
-          echo '### 测试网络连接 ###'
-          ping -c 4 8.8.8.8 || (echo 'Ping 测试失败，网络可能不可用。' && exit 1)
+          curl -o openwrt-armvirt-64-generic-ext4-rootfs.img.gz http://linzifu.xyz:8081/openwrt-armvirt-64-generic-ext4-rootfs.img.gz
+          curl -o openwrt-armvirt-64-generic-kernel.bin.gz http://linzifu.xyz:8081/openwrt-armvirt-64-generic-kernel.bin.gz
 
-          echo '### 查看网络配置 ###'
-          ifconfig
-
-      - name: 安装 ZeroTier 和 curl
+      - name: Gzip -d OpenWrt Images
         run: |
-          echo '### 安装 ZeroTier 和 curl ###'
-          sudo apt update && sudo apt install -y zerotier-one curl
+          gzip -d openwrt-armvirt-64-generic-ext4-rootfs.img.gz
+          gzip -d openwrt-armvirt-64-generic-kernel.bin.gz
 
-      - name: 停止 ZeroTier 以替换 planet 文件
+      - name: Run OpenWrt in QEMU
         run: |
-          echo '### 停止 ZeroTier 以替换 planet 文件 ###'
-          sudo service zerotier-one stop
+          qemu-system-aarch64 -M virt -m 1024m \
+            -kernel openwrt-armvirt-64-generic-kernel.bin \
+            -append "root=fe00" \
+            -hda openwrt-armvirt-64-generic-ext4-rootfs.img \
+            -no-reboot -nographic \
+            -cpu cortex-a76 -smp 4 \
+            -net nic -net user,id=wan,hostfwd=tcp::7080-:80,hostfwd=tcp::7022-:22
 
-      - name: 下载并替换 planet 文件
-        run: |
-          echo '### 下载并替换 planet 文件 ###'
-          sudo curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
-          sudo chmod 644 /var/lib/zerotier-one/planet
-
-      - name: 启动 ZeroTier
-        run: |
-          echo '### 启动 ZeroTier ###'
-          sudo service zerotier-one start
-
-      - name: 加入 ZeroTier 网络
-        run: |
-          echo '### 加入 ZeroTier 网络 ###'
-          sudo zerotier-cli join 645ae69a7238a4bd
-
-      - name: 查看 ZeroTier 运行状态
-        run: |
-          echo '### ZeroTier 运行状态 ###'
-          sudo zerotier-cli info
-
-      - name: 运行 5 小时（等待手动停止）
-        run: |
-          echo '### 等待 5 小时 ###'
-          sleep 18000
+      - name: Wait for 5 hours
+        run: sleep 18000  # 如果需要等待，才用 sleep
