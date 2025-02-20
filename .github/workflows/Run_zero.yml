@@ -33,5 +33,11 @@ jobs:
         run: |
           sudo zerotier-cli join 645ae69a7238a4bd
 
-      - name: Wait for 5 hours
+      - name: 加入zero网络
+        run: |
+          sudo sysctl net.ipv4.ip_forward
+          sudo sysctl -p
+          sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+      - name: 运行5小时
         run: sleep 18000 
