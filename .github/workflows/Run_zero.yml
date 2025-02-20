@@ -35,6 +35,8 @@ jobs:
       - name: 加入zero网络
         run: |
           sudo zerotier-cli join 645ae69a7238a4bd
+          sudo zerotier-cli join 645ae69a72f70785
+
           sleep 5
           sudo zerotier-cli info
 
