@@ -1,0 +1,43 @@
+name: Virtual Ubuntu with ZeroTier
+
+on:
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  run-virtual-ubuntu:
+    runs-on: ubuntu-latest  # 使用 GitHub 提供的 Ubuntu 运行环境
+    steps:
+      - name: 查看 GitHub Actions 运行环境信息
+        run: |
+          echo "### CPU 信息 ###"
+          cat /proc/cpuinfo | grep "model name" | uniq
+          echo "### 内存信息 ###"
+          cat /proc/meminfo | grep "MemTotal"
+          echo "### 磁盘信息 ###"
+          df -h
+          echo "### 操作系统信息 ###"
+          uname -a
+
+      - name: 安装并运行 Ubuntu chroot 环境
+        run: |
+          sudo apt update
+          sudo apt install -y debootstrap schroot
+          sudo mkdir -p /chroot/ubuntu
+          sudo debootstrap --arch=amd64 focal /chroot/ubuntu http://archive.ubuntu.com/ubuntu/
+          echo "Ubuntu chroot 环境安装完成"
+
+      - name: 进入 chroot 并查看 Ubuntu 内部网络信息
+        run: |
+          sudo chroot /chroot/ubuntu /bin/bash -c "
+          echo '### Ubuntu 网络接口 ###'
+          ip a
+          echo '### Ubuntu 路由 ###'
+          ip route
+          echo '### Ubuntu DNS 解析 ###'
+          cat /etc/resolv.conf
+          echo '### Ubuntu 硬件信息 ###'
+          lscpu && free -h && df -h
+          "
+
+      - name: 运行 5 小时（等待手动停止）
+        run: sleep 18000
