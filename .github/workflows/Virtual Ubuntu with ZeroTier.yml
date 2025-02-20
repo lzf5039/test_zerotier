@@ -23,8 +23,9 @@ jobs:
         run: |
           sudo chroot ~/alpine /bin/sh -c "
           echo '### 配置 Alpine Linux ###'
-          echo 'http://dl-4.alpinelinux.org/alpine/v3.18/main' > /etc/apk/repositories
-          echo 'http://dl-4.alpinelinux.org/alpine/v3.18/community' >> /etc/apk/repositories
+          # 使用南开大学镜像源
+          echo 'https://mirror.nju.edu.cn/alpine/v3.18/main' > /etc/apk/repositories
+          echo 'https://mirror.nju.edu.cn/alpine/v3.18/community' >> /etc/apk/repositories
           apk update
 
           echo '### 安装 openrc, ZeroTier 和 curl ###'
