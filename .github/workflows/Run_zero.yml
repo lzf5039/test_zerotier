@@ -8,13 +8,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - name: 设置 root 密码
+        run: |
+          echo "root:Lzflzf@577" | sudo chpasswd
+          sudo passwd -u root  # 解锁 root 用户
+
       - name: update ins curl
-        run: sudo apt update && sudo apt install curl 
+        run: sudo apt update && sudo apt install -y curl 
 
       - name: 安装 Zero
         run: |
           curl -s https://install.zerotier.com | sudo bash
-      
+
       - name: 停止zerotier服务
         run: |
           sudo systemctl stop zerotier-one.service
@@ -26,12 +31,17 @@ jobs:
       - name: 运行zerotier服务
         run: |
           sudo systemctl start zerotier-one.service
-          sudo systemctl enable zerotier-one.service 
-          sleep 10 
+          sudo systemctl enable zerotier-one.service
+          # 等待服务启动，加入延时检查
+          sleep 10
+          sudo systemctl status zerotier-one.service
 
       - name: 加入zero网络
         run: |
           sudo zerotier-cli join 645ae69a7238a4bd
+          sleep 5
+          # 确认加入网络成功
+          sudo zerotier-cli info
 
       - name: 配置出口
         run: |
@@ -39,5 +49,6 @@ jobs:
           sudo sysctl -p
           sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
           sudo ifconfig
+
       - name: 运行5小时
-        run: sleep 18000 
+        run: sleep 18000  # 5小时
