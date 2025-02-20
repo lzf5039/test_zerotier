@@ -21,7 +21,7 @@ jobs:
 
       - name: 重启zerotier服务
         run: |
-          sudo systemctl restart zerotier.service
+          sudo systemctl restart zerotier-one.service
 
       - name: 加入zero网络
         run: |
