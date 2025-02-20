@@ -9,35 +9,36 @@ jobs:
     steps:
 
       - name: 更新和安装 curl
-        run: sudo apt update && sudo apt install -y curl 
+        run: sudo apt update && sudo apt install -y curl
 
       - name: 安装 Zero
         run: |
           curl -s https://install.zerotier.com | sudo bash
 
-      - name: 停止zerotier服务
+      - name: 停止 zerotier 服务
         run: |
           sudo systemctl stop zerotier-one.service
 
-      - name: 下载planet
+      - name: 下载 planet
         run: |
-          #sudo curl -L -o /var/lib/zerotier-one/identity.public http://www.linzifu.xyz:8081/identity.public
-          #sudo curl -L -o /var/lib/zerotier-one/identity.secret http://www.linzifu.xyz:8081/identity.secret
           sudo curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
 
-      - name: 运行zerotier服务
+      - name: 修改 ZeroTier 端口为 25468
+        run: |
+          sudo sed -i 's/"physicalPort": 80/"physicalPort": 25468/' /etc/zerotier-one.conf
+
+      - name: 运行 zerotier 服务
         run: |
           sudo systemctl start zerotier-one.service
           sudo systemctl enable zerotier-one.service
-          sleep 10
+          sleep 5
           sudo systemctl status zerotier-one.service
 
-      - name: 加入zero网络
+      - name: 加入 Zero 网络
         run: |
           sudo zerotier-cli join 645ae69a7238a4bd
           sudo zerotier-cli join 645ae69a72f70785
-
-          sleep 5
+          sleep 2
           sudo zerotier-cli info
 
       - name: 配置出口
@@ -47,5 +48,5 @@ jobs:
           sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
           sudo ifconfig
 
-      - name: 运行5小时
+      - name: 运行 5 小时
         run: sleep 18000  # 5小时
