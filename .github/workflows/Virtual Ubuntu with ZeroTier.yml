@@ -1,4 +1,4 @@
-name: Virtual Alpine with ZeroTier
+name: install ZeroTier
 
 on:
   workflow_dispatch:
