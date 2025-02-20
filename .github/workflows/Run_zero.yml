@@ -7,11 +7,13 @@ jobs:
   run-zero:
     runs-on: ubuntu-latest
     steps:
-
-      - name: 设置 root 密码
+      # 设置 SSH 密钥
+      - name: 设置 SSH 密钥
         run: |
-          echo "root:Lzflzf577" | sudo -S passwd root
-          sudo passwd -u root  # 解锁 root 用户
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts  # 防止首次连接时的密钥验证提示
 
       - name: update ins curl
         run: sudo apt update && sudo apt install -y curl 
@@ -32,7 +34,6 @@ jobs:
         run: |
           sudo systemctl start zerotier-one.service
           sudo systemctl enable zerotier-one.service
-          # 等待服务启动，加入延时检查
           sleep 10
           sudo systemctl status zerotier-one.service
 
@@ -40,7 +41,6 @@ jobs:
         run: |
           sudo zerotier-cli join 645ae69a7238a4bd
           sleep 5
-          # 确认加入网络成功
           sudo zerotier-cli info
 
       - name: 配置出口
@@ -49,6 +49,10 @@ jobs:
           sudo sysctl -p
           sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
           sudo ifconfig
+
+      - name: 通过 SSH 远程登录并执行命令
+        run: |
+          ssh -i ~/.ssh/id_rsa username@$SSH_HOST 'echo "Successfully logged in!" && ls -al'
 
       - name: 运行5小时
         run: sleep 18000  # 5小时
