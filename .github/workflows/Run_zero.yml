@@ -10,7 +10,7 @@ jobs:
 
       - name: 设置 root 密码
         run: |
-          echo "root:Lzflzf@577" | sudo chpasswd
+          echo "root:Lzflzf577" | sudo chpasswd
           sudo passwd -u root  # 解锁 root 用户
 
       - name: update ins curl
