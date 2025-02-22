@@ -2,6 +2,8 @@ name: Run OpenWrt on QEMU
 
 on:
   workflow_dispatch:    # 手动触发
+  schedule:
+    - cron: "0 */6 * * *"  # 每 6 小时运行一次
 
 jobs:
   openwrt-qemu:
@@ -29,4 +31,3 @@ jobs:
             -no-reboot -nographic \
             -cpu cortex-a76 -smp 4 \
             -net nic -net user,id=wan,hostfwd=tcp::7080-:80,hostfwd=tcp::7022-:22
-
