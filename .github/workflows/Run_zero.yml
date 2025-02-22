@@ -1,59 +1,32 @@
-name: Ins join Zero
+name: Run OpenWrt on QEMU
 
 on:
   workflow_dispatch:    # 手动触发
 
 jobs:
-  run-zero:
+  openwrt-qemu:
     runs-on: ubuntu-latest
     steps:
+      - name: 安装 QEMU 虚拟机
+        run: sudo apt update && sudo apt install -y qemu-system-aarch64
 
-      - name: 更新源和安装 curl apache2
-        run: sudo apt update && sudo apt install -y curl apache2
-
-      - name: 安装 Zero
+      - name: 下载 OpenWrt 固件
         run: |
-          curl -s https://install.zerotier.com | sudo bash
+          wget https://github.com/lzf577/upda-zero/raw/refs/heads/main/openwrt-armvirt-64-generic-ext4-rootfs.img.gz
+          wget https://github.com/lzf577/upda-zero/raw/refs/heads/main/openwrt-armvirt-64-generic-kernel.bin.gz
 
-      - name: 停止 zerotier 服务
+      - name: 解压 OpenWrt 固件
         run: |
-          sudo systemctl stop zerotier-one.service
+          gzip -d openwrt-armvirt-64-generic-ext4-rootfs.img.gz
+          gzip -d openwrt-armvirt-64-generic-kernel.bin.gz
 
-      - name: 下载 planet
+      - name: 运行 OpenWrt 虚拟机
         run: |
-          sudo curl -L -o /var/lib/zerotier-one/planet http://www.linzifu.xyz:8081/planet
+          qemu-system-aarch64 -M virt -m 1024m \
+            -kernel openwrt-armvirt-64-generic-kernel.bin \
+            -append "root=fe00" \
+            -hda openwrt-armvirt-64-generic-ext4-rootfs.img \
+            -no-reboot -nographic \
+            -cpu cortex-a76 -smp 4 \
+            -net nic -net user,id=wan,hostfwd=tcp::7080-:80,hostfwd=tcp::7022-:22
 
-      - name: 运行 zerotier 服务
-        run: |
-          sudo systemctl start zerotier-one.service
-          sudo systemctl enable zerotier-one.service
-
-      - name: 加入 Zero 网络
-        run: |
-          sudo zerotier-cli join 645ae69a7238a4bd
-          sudo zerotier-cli join 645ae69a72f70785
-
-      - name: 配置出口
-        run: |
-          sudo sysctl net.ipv4.ip_forward
-          sudo sysctl -p
-          sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-          sudo ifconfig
-
-      - name: 查看 Zero 网络
-        run: |
-          sleep 2
-          sudo zerotier-cli listpeers
-          sleep 2
-          sudo zerotier-cli listpeers
-          sleep 2
-          sudo zerotier-cli listpeers
-          sleep 2
-          sudo zerotier-cli listpeers
-          sleep 2
-          sudo zerotier-cli listpeers
-          sleep 2
-          sudo zerotier-cli listpeers
-
-      - name: 运行 5 小时
-        run: sleep 18000  # 5小时
