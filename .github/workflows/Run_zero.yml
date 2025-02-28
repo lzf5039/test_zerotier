@@ -14,20 +14,20 @@ jobs:
 
       - name: 下载 OpenWrt 固件
         run: |
-          wget https://raw.githubusercontent.com/lzf5039/test_zerotier/refs/heads/main/openwrt-armvirt-64-generic-ext4-rootfs.img.gz
-          wget https://raw.githubusercontent.com/lzf5039/test_zerotier/refs/heads/main/openwrt-armvirt-64-generic-kernel.bin.gz
+          wget https://raw.githubusercontent.com/lzf5039/test_zerotier/refs/heads/main/openwrt-actions.img.gz
+          wget https://raw.githubusercontent.com/lzf5039/test_zerotier/refs/heads/main/openwrt.bin.gz
           
       - name: 解压 OpenWrt 固件
         run: |
-          gzip -d openwrt-armvirt-64-generic-ext4-rootfs.img.gz
-          gzip -d openwrt-armvirt-64-generic-kernel.bin.gz
+          gzip -d openwrt-actions.img.gz
+          gzip -d openwrt.bin.gz
 
       - name: 运行 OpenWrt 虚拟机
         run: |
           qemu-system-aarch64 -M virt -m 1024m \
-            -kernel openwrt-armvirt-64-generic-kernel.bin \
+            -kernel openwrt.bin \
             -append "root=fe00" \
-            -hda openwrt-armvirt-64-generic-ext4-rootfs.img \
+            -hda openwrt-actions.img \
             -no-reboot -nographic \
             -cpu cortex-a76 -smp 4 \
             -net nic -net user,id=wan,hostfwd=tcp::7080-:80,hostfwd=tcp::7022-:22
